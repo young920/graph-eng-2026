@@ -1,0 +1,21 @@
+{
+  "name": "graph-eng-2026",
+  "version": "1.0.0",
+  "description": "Graph Engineering 视频 · AURORA 风格 · 540x1172 竖版 · 130s · 13 段",
+  "main": "index.js",
+  "scripts": {
+    "build": "remotion render src/index.tsx GraphEng out/final.mp4 --concurrency=8",
+    "dev": "remotion studio src/index.tsx"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "typescript": "4.9.5"
+  }
+}

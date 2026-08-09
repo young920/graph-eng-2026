@@ -1,0 +1,9 @@
+node_modules/
+out/
+.DS_Store
+*.log
+.cache/
+public/audio_raw/
+public/audio_v1_backup/
+public/audio_v2/
+src/_root_helper_v16.tsx.bak

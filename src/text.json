@@ -1,0 +1,82 @@
+{
+  "segments": [
+    {
+      "id": "s00",
+      "start": 0,
+      "duration": 8,
+      "text": "图谱工程被吹上天了，但你真的知道它指什么吗？这一篇给你一把尺子。"
+    },
+    {
+      "id": "s01",
+      "start": 8,
+      "duration": 10,
+      "text": "图是什么？点加线。公司组织架构、家族族谱、地铁线路，都是图。它答的是连不连得上、怎么连、连多远，不是单个东西长什么样。"
+    },
+    {
+      "id": "s02",
+      "start": 18,
+      "duration": 10,
+      "text": "HR 系统能告诉你公司有多少人，但问张三请假谁能顶？顶的人又请假了？表格不会答，这是图问题。"
+    },
+    {
+      "id": "s03",
+      "start": 28,
+      "duration": 10,
+      "text": "图工程最早不是 AI 圈的词。从底层点边、到本体建模、到 Neo4j 存储、到 Cypher 查询、再到图神经网络，最后落到反欺诈推荐，6 层栈。"
+    },
+    {
+      "id": "s04",
+      "start": 38,
+      "duration": 12,
+      "text": "四个最容易混的词：图数据库只是存点存边，知识图谱多了语义层；GraphRAG 是用图给 LLM 检索的套路；Context Graph 把 LLM 踢出推理路径。LangGraph 是框架，Graph Engineering 是学科。"
+    },
+    {
+      "id": "s05",
+      "start": 50,
+      "duration": 10,
+      "text": "2026 年这个词火起来，是因为大家把多 Agent 系统的协作显式画成图。节点是 Agent，边是路由，状态沿边流动被读写共享。图就是引擎。"
+    },
+    {
+      "id": "s06",
+      "start": 60,
+      "duration": 12,
+      "text": "图工程至少有三种语境，但真正的混乱不是有几种，而是每个人说的图工程暗含三个不同维度：Scope 范围、Plane 平面、Dynamism 动态程度。"
+    },
+    {
+      "id": "s07",
+      "start": 72,
+      "duration": 10,
+      "text": "Scope 分 Work Graph（这次目标怎么完成）和 Org Graph（系统中长期存在哪些能力）。前者像项目执行计划，后者像组织架构图。中间靠 Assignment 桥接。"
+    },
+    {
+      "id": "s08",
+      "start": 82,
+      "duration": 12,
+      "text": "Plane 分五个：Control 控制平面负责指挥谁先做谁后做；Execution 执行平面真干活；Evaluation 评价平面做验收；Adaptation 自适应根据反馈学；Governance 治理平面定边界。"
+    },
+    {
+      "id": "s09",
+      "start": 94,
+      "duration": 10,
+      "text": "Adaptation 分 6 级——从改当前 Context 到改 Org Graph 角色结构。但铁律是：评价图加治理图必须约束适应图，否则系统会悄悄改低评分标准。"
+    },
+    {
+      "id": "s10",
+      "start": 104,
+      "duration": 10,
+      "text": "Dynamism 分四级：静态图（流程固定）、参数化（按条件走）、运行时生成（当场拆任务）、自适应（基于反馈改图模板）。记住：动态性不是图工程的必要条件。"
+    },
+    {
+      "id": "s11",
+      "start": 114,
+      "duration": 12,
+      "text": "理想参考架构 8 区块：以图为执行引擎、负责计划路由执行失败处理自适应。最该记的三原语：Router 决定流向，Reducer 聚合结果，Verifier 是质量闸门。"
+    },
+    {
+      "id": "s12",
+      "start": 126,
+      "duration": 4,
+      "text": "先 Loop 再 Graph；Verifier 是瓶颈；会判断不用图比会画图更高级。"
+    }
+  ]
+}
