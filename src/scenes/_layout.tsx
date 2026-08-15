@@ -1,86 +1,88 @@
-// Stage · 540×1172 竖版 · "杂志页 + 抖音小红书外框" 套娃版式
-// 风格：米白底 + 黑文字 + 红色 #C53F3F 点睛 + 抖音/小红书 App UI 固定外层
-// 排版：左上对齐为主 · 中英双语 · 编辑感
+// Stage · 540×720 竖版（抖音比例）· 编辑感杂志版式
+// 风格：米白底 + 黑文字 + 紫粉蓝渐变光晕 + 玻璃拟态
+// 排版：左上对齐为主 · 中英双语
 //
-// === 版式（严格分区）===
-// 1172 总高
-//  0  ~  28 : 抖音状态栏（黑底白字，时间随段递增）
-// 28  ~  72 : 顶头条（dot + 中文标 + VOL 期号）
-// 72  ~ 130 : 杂志头版眉（中文小标 + 英文 sans 双行）
-// 130 ~ 870 : 主内容区（每段不同版式：卡片/分屏/栈/三栏/对比/矩阵）
-// 870 ~ 920 : 强调线 + 大数字底纹（如有）
-// 920 ~1010 : 底部小红书卡片（作者 + 一句总结 + 互动数据）
-// 1010~1100 : tabbar 区
-// 1100~1172 : 字幕条（窄条左对齐）
+// Stage 严格分区（v35）· 锁死每个区域高度，子元素不得溢出
+// 720 总高固定分区（v35 终极版）：
+//   0   ~  36 : TopBar（顶部标题栏）
+//  36   ~  90 : SectionLabel（章节小标）
+//  90   ~ 560 : 主内容（470px，给 s00 5 重点完整空间）
+// 560   ~ 580 : 间隔（20px 视觉呼吸，主内容和字幕彻底分离）
+// 580   ~ 700 : SubtitleBar（120px，往下挪到屏幕底部 1/5）
+// 700   ~ 720 : 极简 Footer（20px，仅章节号 + 数字）
+const STAGE_TOP = 36;
+const STAGE_SECTION = 54;
+const STAGE_CONTENT = 470;
+const STAGE_CONTENT_GAP = 20;
+const STAGE_SUBTITLE = 120;
+const STAGE_FOOTER = 20;
+const STAGE_TOTAL = STAGE_TOP + STAGE_SECTION + STAGE_CONTENT + STAGE_CONTENT_GAP + STAGE_SUBTITLE + STAGE_FOOTER; // = 720
+// A1 质感元素：BigNumber + ChapterTag + AuthorCard
+// 关键修复 v29：移除 AuthorCard summary 字段（避免和 SubtitleBar 双字幕）
+// 关键修复 v29：BigNumber 不再带 label 文本（避免大数字里塞整段话）
 
 import React from 'react';
-import { useCurrentFrame, interpolate, spring, useVideoConfig, AbsoluteFill } from 'remotion';
+import { useCurrentFrame, interpolate, spring, useVideoConfig } from 'remotion';
 import subtitles from '../subtitles.json';
 
 // === SegDuration Context（让 FadeUp 等子组件自动按段时长缩放）===
 export const SegDurationContext = React.createContext<number>(10);
 
 // === 配色（AURORA · 紫粉蓝渐变 + 米白 + 黑灰）===
-const PAPER = '#FAF7F2';          // 米白底（AURORA）
-const PAPER_DEEP = '#F0EBE2';     // 米白深（卡片底）
-const INK = '#1A1A1F';            // 主黑（标题）
-const INK_70 = 'rgba(26, 26, 31, 0.7)'; // 副灰
-const INK_50 = 'rgba(26, 26, 31, 0.5)'; // 辅助灰
-const INK_30 = 'rgba(26, 26, 31, 0.18)'; // 分割线灰
-const AURORA_PINK = '#E8B4D8';    // 极光粉
-const AURORA_PURPLE = '#9B8FD9';  // 极光紫
-const AURORA_BLUE = '#B4D4E8';    // 极光蓝
-const AURORA_ACCENT = '#9B8FD9';  // 强调紫（替代红）
+const PAPER = '#FAF7F2';
+const INK = '#1A1A1F';
+const INK_70 = 'rgba(26, 26, 31, 0.7)';
+const INK_50 = 'rgba(26, 26, 31, 0.5)';
+const INK_30 = 'rgba(26, 26, 31, 0.18)';
+const AURORA_PINK = '#E8B4D8';
+const AURORA_PURPLE = '#9B8FD9';
+const AURORA_BLUE = '#B4D4E8';
+const AURORA_ACCENT = '#9B8FD9';
 const AURORA_PINK_15 = 'rgba(232, 180, 216, 0.45)';
 const AURORA_PURPLE_15 = 'rgba(155, 143, 217, 0.4)';
 const AURORA_BLUE_15 = 'rgba(180, 212, 232, 0.45)';
-const APP_BG = '#FFFFFF';         // App 外框白底
-const APP_CARD = 'rgba(255, 255, 255, 0.7)'; // 玻璃拟态卡（半透明白）
-const GLASS_SHADOW = '0 2px 12px rgba(155, 143, 217, 0.08), 0 8px 32px rgba(232, 180, 216, 0.06)';
 
 export const styles = {
   width: 540,
-  height: 1172,
+  height: 720,
   paper: PAPER,
-  paperDeep: PAPER_DEEP,
+  paperDeep: '#F0EBE2',
   ink: INK,
   ink70: INK_70,
   ink50: INK_50,
   ink30: INK_30,
-  red: AURORA_ACCENT,           // 兼容旧名 = 强调紫
-  red15: AURORA_PURPLE_15,      // 兼容旧名 = 紫块浅（中等透明度）
-  accent: AURORA_ACCENT,        // 新名
+  red: AURORA_ACCENT,
+  red15: AURORA_PURPLE_15,
+  accent: AURORA_ACCENT,
   accentPurple15: AURORA_PURPLE_15,
   accentPink15: AURORA_PINK_15,
   accentBlue15: AURORA_BLUE_15,
   auroraPink: AURORA_PINK,
   auroraPurple: AURORA_PURPLE,
   auroraBlue: AURORA_BLUE,
-  appBg: APP_BG,
-  appCard: APP_CARD,
-  glassShadow: GLASS_SHADOW,
+  appBg: '#FFFFFF',
+  appCard: 'rgba(255, 255, 255, 0.7)',
+  glassShadow: '0 2px 12px rgba(155, 143, 217, 0.08), 0 8px 32px rgba(232, 180, 216, 0.06)',
   fontFamily: '"PingFang SC", "Helvetica Neue", "Inter", "Noto Sans SC", sans-serif',
   fontEn: '"Inter", "Helvetica Neue", "Arial Black", sans-serif',
   fontMono: '"SF Mono", "JetBrains Mono", "Menlo", monospace',
-  // AURORA 预设组合（段文件可用）
-  glassCard: `${GLASS_SHADOW} 0 0 0 1px rgba(155, 143, 217, 0.08)`,
 };
 
-// === 13 段标题（按文章 12 章 + 封面/结语映射）===
+// === 13 段标题 ===
 export const TOP_NAMES: string[] = [
-  '封面 · 别再晕',           // s00
-  '图=点+边',               // s01 §1
-  '表格 vs 图',             // s02 §2
-  '6 层数据栈',             // s03 §3
-  'Agent 图工程',           // s04 §4
-  '三维框架',               // s05 §5
-  'Scope 维度',             // s06 §6
-  'Plane 维度',             // s07 §7
-  'Dynamism 维度',          // s08 §8
-  '理想架构',               // s09 §9
-  'Scope×Plane 矩阵',       // s10 §10
-  'CodexLoom 案例',         // s11 §11
-  '带走三把尺子',           // s12 §12+结语
+  '封面 · 别再晕',
+  '图=点+边',
+  '表格 vs 图',
+  '6 层数据栈',
+  'Agent 图工程',
+  '三维框架',
+  'Scope 维度',
+  'Plane 维度',
+  'Dynamism 维度',
+  '理想架构',
+  'Scope×Plane 矩阵',
+  'CodexLoom 案例',
+  '带走三把尺子',
 ];
 
 export const TOP_EN: string[] = [
@@ -99,15 +101,13 @@ export const TOP_EN: string[] = [
   'CHAPTER · TAKE AWAYS',
 ];
 
-
-
-
+// === TopBar · 顶部标题栏 · v34 缩到 36px ===
 export const TopBar: React.FC<{ segIndex: number }> = ({ segIndex }) => {
   const frame = useCurrentFrame();
   const op = interpolate(frame, [0, 14], [0, 1], { extrapolateRight: 'clamp' });
   return (
     <div style={{
-      height: 44,
+      height: 36,
       flexShrink: 0,
       backgroundColor: 'rgba(255, 255, 255, 0.4)',
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -136,7 +136,7 @@ export const TopBar: React.FC<{ segIndex: number }> = ({ segIndex }) => {
   );
 };
 
-// === 杂志版头（中英双行小标 + 主标题）===
+// === SectionLabel · 杂志版头（中英双行小标 + 主标题）· v34 padding 收紧到 8+8 ===
 export const SectionLabel: React.FC<{
   segIndex: number;
   zh: string;
@@ -148,27 +148,26 @@ export const SectionLabel: React.FC<{
   return (
     <div style={{
       flexShrink: 0,
-      padding: '14px 24px 12px',
+      padding: '8px 24px 8px',
       opacity: op, transform: `translateY(${slideY}px)`,
     }}>
       <div style={{
-        fontSize: 11, fontWeight: 500, color: styles.ink50,
-        letterSpacing: '0.18em', marginBottom: 4,
+        fontSize: 10, fontWeight: 500, color: styles.ink50,
+        letterSpacing: '0.18em', marginBottom: 3,
         fontFamily: styles.fontFamily,
         textTransform: 'uppercase',
       }}>
         {zh}
       </div>
       <div style={{
-        fontSize: 10, fontWeight: 700, color: styles.ink70,
+        fontSize: 9, fontWeight: 700, color: styles.ink70,
         letterSpacing: '0.22em', textTransform: 'uppercase',
         fontFamily: styles.fontEn,
       }}>
         {en}
       </div>
-      {/* AURORA 装饰线（紫粉渐变细线，呼应参考视频的横向柔光带） */}
       <div style={{
-        marginTop: 10,
+        marginTop: 8,
         width: 36, height: 2,
         background: `linear-gradient(90deg, ${AURORA_PURPLE}, ${AURORA_PINK}, transparent)`,
         borderRadius: 1,
@@ -177,50 +176,73 @@ export const SectionLabel: React.FC<{
   );
 };
 
-
-
-// === 字幕条（窄条 · 左对齐 · 半透明黑底 · ≤ 2 行）===
+// === SubtitleBar · 玻璃拟态字幕条（v33 重写：外层 wrapper 锁死 80px，内层 lineClamp 2）===
 export const SubtitleBar: React.FC<{ segId: string; startTime: number }> = ({ segId, startTime }) => {
   const frame = useCurrentFrame();
   const currentTime = startTime + frame / 30;
   const segSubs = (subtitles as any)[segId] || [];
-  const idx = segSubs.findIndex((s: any) => currentTime >= s.start && currentTime < s.end);
-  if (idx < 0) {
-    if (segSubs.length > 0 && currentTime >= segSubs[segSubs.length - 1].end) {
-      return <SubtitleLine text={segSubs[segSubs.length - 1].text} active={false} />;
+  // 当前字幕：findIndex 找匹配；末尾 fallback 显示最后一句
+  let cur = segSubs.findIndex((s: any) => currentTime >= (s.start + startTime) && currentTime < (s.end + startTime));
+  let text: string;
+  let active: boolean;
+  if (cur < 0) {
+    if (segSubs.length > 0 && currentTime >= (segSubs[segSubs.length - 1].end + startTime)) {
+      text = segSubs[segSubs.length - 1].text;
+      active = false;
+    } else {
+      // 段开头没字幕时显示空占位（玻璃条仍可见）
+      text = '';
+      active = false;
     }
-    return null;
+  } else {
+    text = segSubs[cur].text;
+    active = true;
   }
-  return <SubtitleLine text={segSubs[idx].text} active={true} />;
+  return (
+    <div style={{
+      margin: '0 18px',
+      padding: '0',
+      height: STAGE_SUBTITLE,        // 100px 锁死，更大更靠下
+      display: 'flex', alignItems: 'center',
+      overflow: 'hidden',
+    }}>
+      <div style={{
+        width: '100%',
+        minHeight: 0, maxHeight: 92,
+        display: '-webkit-box', alignItems: 'center',
+        WebkitLineClamp: 3,
+        WebkitBoxOrient: 'vertical',
+        padding: '12px 18px',
+        backgroundColor: 'rgba(255, 255, 255, 0.85)',
+        backdropFilter: 'blur(24px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+        color: styles.ink,
+        fontSize: 14, fontWeight: active ? 700 : 500, lineHeight: 1.45,
+        letterSpacing: '0.02em',
+        textAlign: 'left',
+        borderRadius: 14,
+        borderLeft: active ? `4px solid ${AURORA_PURPLE}` : '4px solid transparent',
+        borderTop: `1px solid rgba(255, 255, 255, 0.6)`,
+        borderRight: `1px solid rgba(155, 143, 217, 0.14)`,
+        borderBottom: `1px solid rgba(155, 143, 217, 0.14)`,
+        boxShadow: active
+          ? `0 8px 28px ${AURORA_PURPLE_15}, 0 2px 6px rgba(155, 143, 217, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)`
+          : `0 2px 10px rgba(155, 143, 217, 0.06)`,
+        fontFamily: styles.fontFamily,
+        overflow: 'hidden',
+      }}>
+        {text}
+      </div>
+    </div>
+  );
 };
 
-const SubtitleLine: React.FC<{ text: string; active: boolean }> = ({ text, active }) => (
-  <div style={{
-    margin: '0 18px 14px',
-    minHeight: 40, maxHeight: 72,
-    display: 'flex', alignItems: 'center',
-    padding: '10px 14px',
-    backgroundColor: 'rgba(26, 26, 31, 0.78)',
-    color: '#FFFFFF',
-    fontSize: 13, fontWeight: active ? 600 : 400, lineHeight: 1.5,
-    letterSpacing: '0.04em',
-    textAlign: 'left',
-    borderRadius: 10,
-    borderLeft: active ? `3px solid ${AURORA_PURPLE}` : '3px solid transparent',
-    boxShadow: active ? `0 4px 20px ${AURORA_PURPLE_15}` : 'none',
-    transition: 'border-color 0.2s, box-shadow 0.2s',
-    fontFamily: styles.fontFamily,
-  }}>
-    {text}
-  </div>
-);
-
-// === Stage wrapper（v17 流式布局 · 上下垂直堆叠，无 absolute 重叠）===
+// === Stage wrapper · 严格的垂直分区，无 absolute 重叠 ===
 export const Stage: React.FC<{
   segIndex: number;
   segId: string;
   startTime: number;
-  segDuration: number;  // 秒 · 段时长（含气口）
+  segDuration: number;
   zh: string;
   en: string;
   caption: string;
@@ -229,15 +251,14 @@ export const Stage: React.FC<{
   <SegDurationContext.Provider value={segDuration}>
   <div style={{
     width: 540,
-    height: 720,
+    height: 720,  // STAGE_TOTAL 锁死 720
     backgroundColor: PAPER,
     fontFamily: styles.fontFamily,
     color: styles.ink,
-    display: 'flex',
-    flexDirection: 'column',
+    display: 'grid',
+    gridTemplateRows: `${STAGE_TOP}px ${STAGE_SECTION}px ${STAGE_CONTENT}px ${STAGE_CONTENT_GAP}px ${STAGE_SUBTITLE}px ${STAGE_FOOTER}px`,
     overflow: 'hidden',
     position: 'relative',
-    // AURORA 柔光带：从右上到左下的紫粉蓝渐变光晕 + 横向条纹
     backgroundImage: `
       radial-gradient(ellipse 70% 40% at 90% 10%, ${AURORA_PINK_15}, transparent 70%),
       radial-gradient(ellipse 60% 35% at 10% 90%, ${AURORA_BLUE_15}, transparent 70%),
@@ -247,31 +268,92 @@ export const Stage: React.FC<{
   }}>
     <TopBar segIndex={segIndex} />
     <SectionLabel segIndex={segIndex} zh={zh} en={en} />
-    {/* 主内容区：flex 1 自适应填满中间，无 absolute 不重叠 */}
+    {/* 主内容 · 严格 420px 高 · overflow:hidden 裁掉任何溢出 */}
     <div style={{
-      flex: 1,
-      padding: '0 24px',
+      padding: `0 24px`,
       display: 'flex',
       flexDirection: 'column',
-      minHeight: 0,
       position: 'relative',
+      overflow: 'hidden',
+      minHeight: 0,
     }}>
       {children}
     </div>
+    {/* 间隔 20px · 视觉呼吸 */}
+    <div />
+    {/* SubtitleBar · 100px，往下挪更靠下 */}
     <SubtitleBar segId={segId} startTime={startTime} />
+    {/* Footer · 装饰条（大数字 + 章节号）· 占位不抢空间 */}
+    <BottomDecor segIndex={segIndex} />
   </div>
 </SegDurationContext.Provider>
 );
 
-// === 极简动效工具集（统一语言：fade + 小幅 slide）===
+// v31 删除 AuthorCard 组件（PRISM 头像无意义，仅是冗余装饰）
 
-// FadeUp · 流式 · opacity + translateY 动效
-// delayRatio（0~1）相对段时长自动缩放；delay 接受帧数（绝对）
+// === BottomDecor · 底部装饰条（大数字 + 章节号 · 水平分布不重叠）· v33 改成 Grid 占位 footer ===
+const BottomDecor: React.FC<{ segIndex: number }> = ({ segIndex }) => {
+  const frame = useCurrentFrame();
+  const op = interpolate(frame, [0, 18], [0, 1], { extrapolateRight: 'clamp' });
+  const numStr = String(segIndex).padStart(2, '0');
+  const variant = segIndex === 0 ? 'COVER'
+    : segIndex === 12 ? 'TAKEAWAY'
+    : segIndex <= 4 ? 'CHAPTER'
+    : segIndex <= 8 ? 'FRAMEWORK'
+    : 'CASE';
+  return (
+    <div style={{
+      // v35: 极简 Footer，20px 高度，仅章节号 + 大数字横排
+      height: STAGE_FOOTER,
+      padding: '0 24px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      opacity: op,
+      pointerEvents: 'none',
+      fontFamily: styles.fontEn,
+    }}>
+      {/* 左：章节号标牌 */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 6,
+      }}>
+        <div style={{
+          width: 2, height: 10,
+          background: `linear-gradient(180deg, ${AURORA_PINK}, ${AURORA_PURPLE})`,
+          borderRadius: 1,
+        }} />
+        <span style={{
+          fontSize: 9, fontWeight: 700,
+          color: styles.ink50, letterSpacing: '0.18em',
+        }}>
+          {variant}
+        </span>
+        <span style={{
+          fontSize: 9, fontWeight: 800,
+          color: styles.ink, letterSpacing: '0.04em',
+        }}>
+          −{numStr}
+        </span>
+      </div>
+      {/* 右：大数字 */}
+      <span style={{
+        fontSize: 14, fontWeight: 800,
+        color: styles.ink, opacity: 0.35,
+        letterSpacing: '-0.02em',
+      }}>
+        {numStr}/13
+      </span>
+    </div>
+  );
+};
+
+// === 动效工具集 ===
+
+// FadeUp · 流式 · opacity + translateY
 export const FadeUp: React.FC<{ delay?: number; delayRatio?: number; duration?: number; children: React.ReactNode; style?: React.CSSProperties }> = ({ delay, delayRatio, duration = 15, children, style }) => {
   const frame = useCurrentFrame();
   const config = useVideoConfig();
   const segDuration = React.useContext(SegDurationContext);
-  // 如果传了 delayRatio，按比例缩放到段时长
   const realDelay = (delayRatio !== undefined)
     ? Math.round(delayRatio * segDuration * config.fps)
     : (delay || 0);
@@ -289,7 +371,6 @@ export const FadeUp: React.FC<{ delay?: number; delayRatio?: number; duration?: 
 };
 
 // SlideIn · 横向 · 0.5s · 30px
-// delay 接受帧数（绝对）或 delayRatio（0~1，相对段时长）
 export const SlideIn: React.FC<{ delay?: number; delayRatio?: number; from?: 'left' | 'right'; children: React.ReactNode; style?: React.CSSProperties }> = ({ delay, delayRatio, from = 'left', children, style }) => {
   const frame = useCurrentFrame();
   const config = useVideoConfig();
@@ -303,8 +384,7 @@ export const SlideIn: React.FC<{ delay?: number; delayRatio?: number; from?: 'le
   return <div style={{ opacity: op, transform: `translateX(${tx}px)`, ...style }}>{children}</div>;
 };
 
-// PopIn · 弹性缩放 · 关键强调（数字/标题）· ≤ 1 次/段
-// delay 接受帧数（绝对）或 delayRatio（0~1，相对段时长）
+// PopIn · 弹性缩放 · 关键强调（数字/标题）
 export const PopIn: React.FC<{ delay?: number; delayRatio?: number; children: React.ReactNode; style?: React.CSSProperties; from?: number }> = ({ delay, delayRatio, children, style, from = 0.7 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -322,7 +402,6 @@ export const PopIn: React.FC<{ delay?: number; delayRatio?: number; children: Re
 };
 
 // DrawLine · 强调线（横向延展 · 0.4s）
-// delay 接受帧数（绝对）或 delayRatio（0~1，相对段时长）
 export const DrawLine: React.FC<{ delay?: number; delayRatio?: number; width: number; height?: number; color?: string; style?: React.CSSProperties }> = ({ delay, delayRatio, width, height = 2, color, style }) => {
   const frame = useCurrentFrame();
   const config = useVideoConfig();
