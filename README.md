@@ -152,3 +152,5 @@ npx remotion render src/index.tsx GraphEng out/v25_full.mp4 --concurrency=8
 ```
 
 输出：`out/v25_full.mp4` · 11.3MB · 198s · 540×720 · h264+aac · 已含配音
+
+> **本地备份**（不入仓，留在项目目录）：`public/audio_v25_16x/` 是早期 1.6x 加速版配音备份（已被 v25 重生版本替代）；`src/scenes/_layout_v28.tsx.bak` 是 v28 阶段 layout 备份（未启用）。如需回滚直接 `cp` 回去。
