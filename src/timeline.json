@@ -2,68 +2,68 @@
   "segments": [
     {
       "id": "s00",
-      "start": 0.0,
-      "duration": 10.46
+      "start": 0,
+      "duration": 12.18
     },
     {
       "id": "s01",
-      "start": 10.46,
-      "duration": 15.83
+      "start": 12.18,
+      "duration": 11.51
     },
     {
       "id": "s02",
-      "start": 26.29,
-      "duration": 13.62
+      "start": 23.69,
+      "duration": 14.53
     },
     {
       "id": "s03",
-      "start": 39.91,
-      "duration": 15.38
+      "start": 38.22,
+      "duration": 18.71
     },
     {
       "id": "s04",
-      "start": 55.29,
-      "duration": 18.69
+      "start": 56.93,
+      "duration": 15.88
     },
     {
       "id": "s05",
-      "start": 73.98,
-      "duration": 15.78
+      "start": 72.81,
+      "duration": 15.56
     },
     {
       "id": "s06",
-      "start": 89.76,
-      "duration": 16.07
+      "start": 88.37,
+      "duration": 14.44
     },
     {
       "id": "s07",
-      "start": 105.83,
-      "duration": 16.36
+      "start": 102.81,
+      "duration": 17.75
     },
     {
       "id": "s08",
-      "start": 122.19,
-      "duration": 17.44
+      "start": 120.56,
+      "duration": 17.51
     },
     {
       "id": "s09",
-      "start": 139.63,
-      "duration": 15.59
+      "start": 138.07,
+      "duration": 20.24
     },
     {
       "id": "s10",
-      "start": 155.22,
-      "duration": 16.48
+      "start": 158.31,
+      "duration": 18.25
     },
     {
       "id": "s11",
-      "start": 171.7,
-      "duration": 17.15
+      "start": 176.56,
+      "duration": 15.64
     },
     {
       "id": "s12",
-      "start": 188.86,
-      "duration": 9.14
+      "start": 192.2,
+      "duration": 17.17
     }
   ]
 }
