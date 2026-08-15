@@ -7,3 +7,5 @@ public/audio_raw/
 public/audio_v1_backup/
 public/audio_v2/
 src/_root_helper_v16.tsx.bak
+analysis/ref_frames/
+analysis/ref_ocr/
